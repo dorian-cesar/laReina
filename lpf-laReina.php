@@ -6,7 +6,7 @@ require_once './conexion.php';
 
 
 
-$consulta="SELECT hash FROM masgps.hash where user='lasCondes' and pasw='123'";
+$consulta="SELECT hash FROM masgps.hash where user='lareina' and pasw='123'";
 
 
 
