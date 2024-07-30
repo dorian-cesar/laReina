@@ -15,7 +15,7 @@ $resutaldo= mysqli_query($mysqli,$consulta);
 
 
 $data=mysqli_fetch_array($resutaldo);
-
+ 
 $cap= $data['hash'];
 
 
@@ -123,20 +123,20 @@ foreach ($array as $item) {
 
 
       'id'=>$id,
-      'imei'=>$imei,
+     // 'imei'=>$imei,
       'patente'=>$plate,
-      'lat'=>$lat,
-      'lng'=>$lng,
-      'speed'=>$speed,
-      'direccion'=>$direccion,
-      'connection_status'=>$connection_status,
-      'signal_level'=>$signal_level,
-      'movement_status'=>$movement_status,
-      'ignicion'=>$ignicion,
+     // 'lat'=>$lat,
+      //'lng'=>$lng,
+     // 'speed'=>$speed,
+     // 'direccion'=>$direccion,
+     // 'connection_status'=>$connection_status,
+     // 'signal_level'=>$signal_level,
+    //  'movement_status'=>$movement_status,
+     // 'ignicion'=>$ignicion,
      // 'odometro'=>$odometro,
      // 'Hmotor'=>$hmotor,
   
-      'ultima-conexion'=>$last_u
+     // 'ultima-conexion'=>$last_u
       
     );
 
