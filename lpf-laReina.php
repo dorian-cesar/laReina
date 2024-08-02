@@ -81,8 +81,7 @@ foreach ($array as $item) {
     ),
   ));
 
-
-  $response2 = curl_exec($curl);
+  echo   $response2 = curl_exec($curl);
 
   curl_close($curl);
 

@@ -4,18 +4,19 @@ if ($mysqli->connect_errno > 0) {
     die("Error en la conexión" . $mysqli->connect_error);
 }
 
-
 $place = $_GET['paradero'];
-
-//$patenteBuscada = $_GET['patente'];
 
 $hash = 'e6da71644ac219ce6effb9666ff4082e';
 
 $consulta = "SELECT * FROM laReina.paradero where codigo='$place'";
 
 $result = mysqli_query($mysqli, $consulta);
-$row = mysqli_fetch_array($result);
 
+if (!$result || mysqli_num_rows($result) == 0) {
+    die("No se encontraron resultados para el paradero especificado.");
+}
+
+$row = mysqli_fetch_array($result);
 
 
 $lat1 = $row['lat'];
@@ -32,17 +33,48 @@ $routes = array($r1, $r2, $r3, $r4, $r5);
 $name_routes = [9744, 9745, 9746, 9747, 9748];
 $j = 0;
 for ($i = 0; $i <= 4; $i++) {
-
     if ($routes[$i] == 1) {
-
         $rutas[$j] = ($name_routes[$i]);
-       
         $j++;
-    };
-
+    }
 }
-//echo json_encode($rutas);
-//goto Fin;
+
+// Definición de funciones
+function calculateDistance($lat1, $lng1, $lat2, $lng2)
+{
+    // Radio de la Tierra en kilómetros
+    $earthRadius = 6371;
+
+    // Convertir las latitudes y longitudes de grados a radianes
+    $lat1 = deg2rad($lat1);
+    $lng1 = deg2rad($lng1);
+    $lat2 = deg2rad($lat2);
+    $lng2 = deg2rad($lng2);
+
+    // Diferencias de latitud y longitud
+    $dLat = $lat2 - $lat1;
+    $dLng = $lng2 - $lng1;
+
+    // Aplicar la fórmula del haversine
+    $a = sin($dLat / 2) * sin($dLat / 2) +
+        cos($lat1) * cos($lat2) *
+        sin($dLng / 2) * sin($dLng / 2);
+    $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+    // Calcular la distancia
+    $distance = $earthRadius * $c;
+
+    return $distance;
+}
+
+function calculateTimeInMinutes($distance, $speed)
+{
+    // Tiempo en horas
+    $timeInHours = $distance / $speed;
+    // Convertir a minutos y limitar a 2 decimales
+    $timeInMinutes = round($timeInHours * 60, 2);
+    return $timeInMinutes;
+}
 
 $curl = curl_init();
 
@@ -73,22 +105,15 @@ $listado = curl_exec($curl);
 $json = json_decode($listado);
 
 $array = $json->list;
-
+$k=0;
 
 foreach ($array as $item) {
-
     $id_tracker = $item->id;
-
     $group_id = $item->group_id;
-
     $patente = $item->label;
-
-
-    foreach ($rutas  as $rutaa) {
-
-
+    
+    foreach ($rutas as $rutaa) {
         if ($rutaa == $group_id) {
-
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
@@ -106,9 +131,7 @@ foreach ($array as $item) {
                 ),
             ));
 
-
             $response2 = curl_exec($curl);
-
             curl_close($curl);
 
             $array = json_decode($response2);
@@ -120,53 +143,12 @@ foreach ($array as $item) {
             $direccion = $array->state->gps->heading;
             $connection_status = $array->state->connection_status;
 
-
-            function calculateDistance($lat1, $lng1, $lat2, $lng2)
-            {
-                // Radio de la Tierra en kilómetros
-                $earthRadius = 6371;
-
-                // Convertir las latitudes y longitudes de grados a radianes
-                $lat1 = deg2rad($lat1);
-                $lng1 = deg2rad($lng1);
-                $lat2 = deg2rad($lat2);
-                $lng2 = deg2rad($lng2);
-
-                // Diferencias de latitud y longitud
-                $dLat = $lat2 - $lat1;
-                $dLng = $lng2 - $lng1;
-
-                // Aplicar la fórmula del haversine
-                $a = sin($dLat / 2) * sin($dLat / 2) +
-                    cos($lat1) * cos($lat2) *
-                    sin($dLng / 2) * sin($dLng / 2);
-                $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-                // Calcular la distancia
-                $distance = $earthRadius * $c;
-
-                return $distance;
-            }
-
-            function calculateTimeInMinutes($distance, $speed)
-            {
-                // Tiempo en horas
-                $timeInHours = $distance / $speed;
-                // Convertir a minutos y limitar a 2 decimales
-                $timeInMinutes = round($timeInHours * 60, 2);
-                return $timeInMinutes;
-            }
-
             $speedMedia = 22; // Velocidad promedio en km/h
 
             $distance = calculateDistance($lat1, $lng1, $lat2, $lng2);
-
             $timeInMinutes = calculateTimeInMinutes($distance, $speedMedia);
 
             $json2 = array(
-
-
-                //'id' => $id,
                 'patente' => $patente,
                 'lat' => $lat2,
                 'lng' => $lng2,
@@ -176,30 +158,18 @@ foreach ($array as $item) {
                 'ignicion' => $ignicion,
                 'distance' => $distance,
                 'eta' => $timeInMinutes,
-                'ruta' => $rutaa
-
+                'ruta' => $rutaa-9743
             );
 
-            echo json_encode($json2);
+           $total[$k]=$json2;
+           $k++;
         }
+
+        
     }
+
+
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Fin:
+echo json_encode($total);
+?>
