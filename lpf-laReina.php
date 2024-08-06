@@ -81,7 +81,7 @@ foreach ($array as $item) {
     ),
   ));
 
-  echo   $response2 = curl_exec($curl);
+     $response2 = curl_exec($curl);
 
   curl_close($curl);
 
@@ -132,9 +132,6 @@ foreach ($array as $item) {
       'signal_level'=>$signal_level,
       'movement_status'=>$movement_status,
       'ignicion'=>$ignicion,
-     // 'odometro'=>$odometro,
-     // 'Hmotor'=>$hmotor,
-  
       'ultima-conexion'=>$last_u
       
     );
