@@ -61,6 +61,7 @@ foreach ($array as $item) {
  
    $id = $item->id;
    $imei =$item->source->device_id;
+   $group_id = $item->group_id;
   //echo " , &nbsp";
   
 
@@ -132,7 +133,9 @@ foreach ($array as $item) {
       'signal_level'=>$signal_level,
       'movement_status'=>$movement_status,
       'ignicion'=>$ignicion,
-      'ultima-conexion'=>$last_u
+      'ultima-conexion'=>$last_u,
+      'ruta'=>$group_id-9743
+
       
     );
 
